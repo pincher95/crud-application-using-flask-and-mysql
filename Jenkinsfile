@@ -1,4 +1,6 @@
 def label = "worker-${UUID.randomUUID().toString()}"
+def DockerImage = "foaas:v1.0"
+def customImage = null
 
 podTemplate(label: label, containers: [
   containerTemplate(name: 'gradle', image: 'gradle:4.5.1-jdk9', command: 'cat', ttyEnabled: true),
