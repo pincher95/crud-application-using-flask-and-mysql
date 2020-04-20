@@ -65,6 +65,12 @@ volumes: [
 //         }
       }
     }
+    stage('Push Artifact to Docker Hub') {
+      container('') {
+
+      }
+
+    }
 //     stage('Run kubectl') {
 //       container('kubectl') {
 //         sh "kubectl get pods"
