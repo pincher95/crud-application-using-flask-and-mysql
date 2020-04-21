@@ -36,8 +36,10 @@ volumes: [
     }
     stage('Push Artifact to Docker Hub') {
       container('docker') {
-        withDockerRegistry(registry: [credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/']) {
-          customImage = docker.push()
+        withRegistry(registry: [credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/']) {
+          sh """
+            docker push pincher95/crud_flask:${env.BUILD_NUMBER}
+          """
         }
       }
     }
