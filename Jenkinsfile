@@ -21,7 +21,7 @@ volumes: [
         container('mysql-client') {
           sh """
             TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print \$2}'`
-            if [ TABLE != "phone_book" ]; then
+            if [ \$TABLE != "phone_book" ]; then
               mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
             else
               echo "Table already exist!!!..."
