@@ -1,4 +1,4 @@
-FROM python:3.5-alpine
+FROM pincher95/pymysql-flask:latest
 
 WORKDIR /app
 COPY source_code/ /app

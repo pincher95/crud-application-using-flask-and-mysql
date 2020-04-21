@@ -21,7 +21,8 @@ volumes: [
         container('mysql-client') {
           sh """
             TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print \$2}'`
-            if [ \$TABLE != "phone_book" ]; then
+            echo $TABLE
+            if [ "$TABLE" != "phone_book" ]; then
               mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
             else
               echo "Table already exist!!!..."
@@ -41,7 +42,7 @@ volumes: [
     }
     stage('Push Artifact to Docker Hub') {
       container('docker') {
-        withRegistry(registry: [credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/']) {
+        withDockerRegistry(registry: [credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/']) {
           sh """
             docker push pincher95/crud_flask:${env.BUILD_NUMBER}
           """
