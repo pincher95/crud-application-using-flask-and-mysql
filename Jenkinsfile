@@ -36,7 +36,7 @@ volumes: [
     }
     stage('Push Artifact to Docker Hub') {
       container('docker') {
-        withDockerRegistry(credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/') {
+        withDockerRegistry(registry: [credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/']) {
           customImage = docker.push()
         }
       }
