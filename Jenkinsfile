@@ -19,15 +19,14 @@ volumes: [
     stage('Init app DataBase') {
       try {
         container('mysql-client') {
-          sh """
-            TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print \$2}'`
-            echo $TABLE
-            if [ "$TABLE" != "phone_book" ]; then
-              mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
-            else
-              echo "Table already exist!!!..."
-             fi
-          """
+//           sh ("TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print $2}'`")
+//             echo $TABLE
+//             if [ "$TABLE" != "phone_book" ]; then
+//               mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
+//             else
+//               echo "Table already exist!!!..."
+//              fi
+//           )
         }
       }
       catch (exc) {
@@ -51,10 +50,11 @@ volumes: [
     }
     stage('Run kubectl') {
       container('kubectl') {
-        withCredentials([kubeconfigFile(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh '''cat $KUBECONFIG'''
+        withKubeConfig([credentialsId: 'kubeconfig']) {
+            sh '''
+              kubectl apply -f deployment.yaml
+            '''
         }
-        sh "kubectl get pods -n kube-app"
       }
     }
 //     stage('Run helm') {
