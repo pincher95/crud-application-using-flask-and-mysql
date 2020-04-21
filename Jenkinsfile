@@ -12,70 +12,40 @@ volumes: [
   hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
 ]) {
   node(label) {
-//     def myRepo = checkout scm
-//     def gitCommit = myRepo.GIT_COMMIT
-//     def gitBranch = myRepo.GIT_BRANCH
-//     def shortGitCommit = "${gitCommit[0..10]}"
-//     def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
     stage('Git') { // Get code from GitLab repository
       git branch: 'master',
         url: 'https://github.com/pincher95/crud-application-using-flask-and-mysql.git'
     }
-
     stage('Init app DataBase') {
-      container('mysql-client') {
-        sh """
-          mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
-        """
+      try {
+        container('mysql-client') {
+          sh """
+            mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
+          """
+        }
+      }
+      catch (exc) {
+        println "Database already initialized"
+        throw(exc)
       }
     }
-//     stage('Test') {
-//       try {
-//         container('gradle') {
-//           sh """
-//             pwd
-//             echo "GIT_BRANCH=${gitBranch}" >> /etc/environment
-//             echo "GIT_COMMIT=${gitCommit}" >> /etc/environment
-//             gradle test
-//             """
-//         }
-//       }
-//       catch (exc) {
-//         println "Failed to test - ${currentBuild.fullDisplayName}"
-//         throw(exc)
-//       }
-//     }
-//     stage('Build') {
-//       container('gradle') {
-//         sh "gradle build"
-//       }
-//     }
     stage('Create Docker images') {
       container('docker') {
         customImage = docker.build "pincher95/crud_flask:${env.BUILD_NUMBER}"
-//         withCredentials([[$class: 'UsernamePasswordMultiBinding',
-//           credentialsId: 'dockerhub.pincher95',
-//           usernameVariable: 'DOCKER_HUB_USER',
-//           passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-//           sh """
-//             docker login -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD}
-//             docker build -t namespace/my-image:${gitCommit} .
-//             docker push namespace/my-image:${gitCommit}
-//             """
-//         }
       }
     }
     stage('Push Artifact to Docker Hub') {
-      container('') {
-
+      container('docker') {
+        withDockerRegistry(credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/') {
+          customImage = docker.push()
+        }
       }
-
     }
-//     stage('Run kubectl') {
-//       container('kubectl') {
-//         sh "kubectl get pods"
-//       }
-//     }
+    stage('Run kubectl') {
+      container('kubectl') {
+        sh "kubectl get pods -n kube-app"
+      }
+    }
 //     stage('Run helm') {
 //       container('helm') {
 //         sh "helm list"
