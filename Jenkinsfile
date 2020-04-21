@@ -20,7 +20,12 @@ volumes: [
       try {
         container('mysql-client') {
           sh """
-            mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
+            TABLE=echo $(mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv 'wildcard\|database\|tables' |awk -F' ' '{print $2}')
+            if [ TABLE != "phone_book" ]; then
+              mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
+            else
+              echo "Table already exist!!!..."
+             fi
           """
         }
       }
@@ -45,6 +50,9 @@ volumes: [
     }
     stage('Run kubectl') {
       container('kubectl') {
+        withCredentials([kubeconfigFile(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            sh '''cat $KUBECONFIG'''
+        }
         sh "kubectl get pods -n kube-app"
       }
     }
