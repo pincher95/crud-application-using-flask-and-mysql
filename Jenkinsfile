@@ -55,7 +55,7 @@ volumes: [
                         contextName: env.K8s_CONTEXT_NAME,
                         clusterName: env.K8s_CLUSTER_NAME]) {
             sh '''
-              kubectl apply -f deployment.yaml
+              kubectl apply -f pod.yaml
             '''
         }
       }
