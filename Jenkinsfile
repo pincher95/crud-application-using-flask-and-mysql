@@ -50,7 +50,10 @@ volumes: [
     }
     stage('Run kubectl') {
       container('kubectl') {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
+        withKubeConfig([credentialsId: env.K8s_CREDENTIALS_ID,
+                        serverUrl: env.K8s_SERVER_URL,
+                        contextName: env.K8s_CONTEXT_NAME,
+                        clusterName: env.K8s_CLUSTER_NAME]) {
             sh '''
               kubectl apply -f deployment.yaml
             '''
