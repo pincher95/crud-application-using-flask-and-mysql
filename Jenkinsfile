@@ -4,7 +4,7 @@ def customImage = null
 
 podTemplate(label: label, containers: [
   containerTemplate(name: 'docker', image: 'docker', command: 'cat', ttyEnabled: true),
-  containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.8', command: 'cat', ttyEnabled: true),
+  containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.15.10', command: 'cat', ttyEnabled: true),
   containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:latest', command: 'cat', ttyEnabled: true),
   containerTemplate(name: 'mysql-client', image: 'arey/mysql-client:latest', command: 'cat', ttyEnabled: true)
 ],
@@ -22,7 +22,7 @@ volumes: [
 //           sh ("TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print $2}'`")
 //             echo $TABLE
 //             if [ "$TABLE" != "phone_book" ]; then
-//               mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql
+              mysql -h mysql -uroot -ptesting < database/crud_flask.sql
 //             else
 //               echo "Table already exist!!!..."
 //              fi
