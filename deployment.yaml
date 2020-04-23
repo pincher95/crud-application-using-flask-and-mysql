@@ -62,8 +62,8 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: phone_book
-  namespace: default
-spec:
+#  namespace: default
+spec:`
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
