@@ -1,73 +1,73 @@
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: phone_book-deployment
-#  labels:
-#    app: phone_book
-#spec:
-#  replicas: 1
-#  selector:
-#    matchLabels:
-#      app: phone_book
-#  template:
-#    metadata:
-#      labels:
-#        app: phone_book
-#    spec:
-#      containers:
-#        - name: phone_book
-#          image: pincher95/crud_flask:latest
-#          ports:
-#            - containerPort: 5000
-#          resources:
-#            limits:
-#              cpu: 500m
-#            requests:
-#              cpu: 200m
-#---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phonebook-deployment
+  labels:
+    app: phonebook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phonebook
+  template:
+    metadata:
+      labels:
+        app: phonebook
+    spec:
+      containers:
+        - name: phonebook
+          image: pincher95/crud_flask:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m
+---
 kind: Service
 apiVersion: v1
 metadata:
-  name: phone_book-service
+  name: phonebook-service
 spec:
   type: ClusterIP
   selector:
-    app: phone_book
+    app: phonebook
   ports:
     - port: 8181 # Default port for image
       targetPort: 8181
-#---
-#apiVersion: extensions/v1beta1
-#kind: Ingress
-#metadata:
-#  name: phone_book-ingress
-#  annotations:
-#    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-#    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-#    nginx.ingress.kubernetes.io/rewrite-target: /
-#spec:
-#  tls:
-#    - hosts:
-#        - anthonycornell.com
-#      secretName: tls-secret
-#  rules:
-#    - http:
-#        paths:
-#          - path: /
-#            backend:
-#              serviceName: phone_book-service
-#              servicePort: 8181
-#---
-#apiVersion: autoscaling/v1
-#kind: HorizontalPodAutoscaler
-#metadata:
-#  name: phone_book
-##  namespace: default
-#spec:`
-#  scaleTargetRef:
-#    apiVersion: apps/v1
-#    kind: Deployment
-#    name: phone_book
-#  minReplicas: 1
-#  maxReplicas: 5
-#  targetCPUUtilizationPercentage: 75
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: phonebook-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+    - hosts:
+        - anthonycornell.com
+      secretName: tls-secret
+  rules:
+    - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: phonebook-service
+              servicePort: 8181
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: phonebook
+#  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: phonebook
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 75
