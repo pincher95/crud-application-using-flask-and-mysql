@@ -1,7 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
-/docker-compose.yaml
 .idea/.gitignore
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
 crud-application-using-flask-and-mysql.iml
+/pod.yaml
+/readme

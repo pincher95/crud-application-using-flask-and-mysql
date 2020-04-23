@@ -17,21 +17,8 @@ volumes: [
         url: 'https://github.com/pincher95/crud-application-using-flask-and-mysql.git'
     }
     stage('Init app DataBase') {
-      try {
-        container('mysql-client') {
-//           sh ("TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print $2}'`")
-//             echo $TABLE
-//             if [ "$TABLE" != "phone_book" ]; then
-              sh ("mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql")
-//             else
-//               echo "Table already exist!!!..."
-//              fi
-//           )
-        }
-      }
-      catch (exc) {
-        println "Database already initialized"
-        throw(exc)
+      container('mysql-client') {
+        sh ("mysql -h mysql.service.consul -uroot -ptesting < database/crud_flask.sql")
       }
     }
     stage('Create Docker images') {
@@ -48,14 +35,11 @@ volumes: [
         }
       }
     }
-    stage('Run kubectl') {
-      container('kubectl') {
+      container('Deploy to K8s cluster') {
         withKubeConfig([credentialsId: env.K8s_CREDENTIALS_ID,
-                        serverUrl: env.K8s_SERVER_URL,
-                        contextName: env.K8s_CONTEXT_NAME,
-                        clusterName: env.K8s_CLUSTER_NAME]) {
+                        serverUrl: 'https://kubernetes.default']) {
             sh '''
-              kubectl apply -f pod.yaml
+              kubectl apply -f deployment.yaml
             '''
         }
       }

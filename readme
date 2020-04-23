@@ -1,1 +1,2 @@
 RUN pip install -r requirements.txt
+//           sh ("TABLE=`mysqlshow -h mysql -P3306 -u root -ptesting crud_flask |grep -iv wildcard |grep -iv database |grep -iv table |awk -F' ' '{print $2}'`")

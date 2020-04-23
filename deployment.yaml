@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: phonebook
-          image: pincher95/crud_flask:latest
+          image: pincher95/crud_flask:1
           ports:
             - containerPort: 5000
           resources:
