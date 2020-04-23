@@ -1,41 +1,41 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: phone_book-deployment
-  labels:
-    app: phone_book
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: phone_book
-  template:
-    metadata:
-      labels:
-        app: phone_book
-    spec:
-      containers:
-        - name: phone_book
-          image: pincher95/crud_flask:latest
-          ports:
-            - containerPort: 5000
-          resources:
-            limits:
-              cpu: 500m
-            requests:
-              cpu: 200m
-#---
-#kind: Service
-#apiVersion: v1
+#apiVersion: apps/v1
+#kind: Deployment
 #metadata:
-#  name: phone_book-service
-#spec:
-#  type: ClusterIP
-#  selector:
+#  name: phone_book-deployment
+#  labels:
 #    app: phone_book
-#  ports:
-#    - port: 8181 # Default port for image
-#      targetPort: 8181
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      app: phone_book
+#  template:
+#    metadata:
+#      labels:
+#        app: phone_book
+#    spec:
+#      containers:
+#        - name: phone_book
+#          image: pincher95/crud_flask:latest
+#          ports:
+#            - containerPort: 5000
+#          resources:
+#            limits:
+#              cpu: 500m
+#            requests:
+#              cpu: 200m
+#---
+kind: Service
+apiVersion: v1
+metadata:
+  name: phone_book-service
+spec:
+  type: ClusterIP
+  selector:
+    app: phone_book
+  ports:
+    - port: 8181 # Default port for image
+      targetPort: 8181
 #---
 #apiVersion: extensions/v1beta1
 #kind: Ingress
