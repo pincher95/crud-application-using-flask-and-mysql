@@ -4,7 +4,7 @@ metadata:
   name: dnsutils
   annotations:
     "consul.hashicorp.com/connect-inject": "false"
-  namespace: default
+  namespace: kube-jenkins
 spec:
   containers:
     - name: dnsutils
