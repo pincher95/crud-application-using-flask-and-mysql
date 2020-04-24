@@ -29,18 +29,15 @@ volumes: [
     stage('Push Artifact to Docker Hub') {
       container('docker') {
         withDockerRegistry(registry: [credentialsId: 'dockerhub.pincher95',url: 'https://index.docker.io/v1/']) {
-          sh """
-            docker push pincher95/crud_flask:${env.BUILD_NUMBER}
-          """
+          sh ("docker push pincher95/crud_flask:${env.BUILD_NUMBER}")
         }
       }
     }
-      container('Deploy to K8s cluster') {
+    stage('Deploy to K8s cluster') {
+      container('kubectl') {
         withKubeConfig([credentialsId: env.K8s_CREDENTIALS_ID,
                         serverUrl: 'https://kubernetes.default']) {
-            sh '''
-              kubectl apply -f deployment.yaml
-            '''
+            sh ("kubectl apply -f deployment.yaml")
         }
       }
     }
